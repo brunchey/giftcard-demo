@@ -1,8 +1,5 @@
 package io.axoniq.demo.giftcard;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.common.caching.Cache;
 import org.axonframework.common.caching.WeakReferenceCache;
@@ -11,10 +8,7 @@ import org.axonframework.eventhandling.EventBus;
 import org.axonframework.messaging.Message;
 import org.axonframework.messaging.interceptors.LoggingInterceptor;
 import org.axonframework.queryhandling.QueryBus;
-import org.axonframework.serialization.Serializer;
-import org.axonframework.serialization.json.JacksonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -49,6 +43,15 @@ public class AxonConfig {
     public void configureLoggingInterceptorFor(QueryBus queryBus, LoggingInterceptor<Message<?>> loggingInterceptor) {
         queryBus.registerDispatchInterceptor(loggingInterceptor);
         queryBus.registerHandlerInterceptor(loggingInterceptor);
+    }
+
+    //This works in conjunction with the axon.eventhandling.processors.all-card-summaries settings in the
+    //application.properties file.  The properties file is used to define the Tracking Event Processor, while
+    //adding Processing Groups is done programmatically in this method.
+    @Autowired
+    public void configureAllCardSummariesTrackingEventProcessors(EventProcessingConfigurer eventProcessingConfigurer) {
+        eventProcessingConfigurer.assignProcessingGroup("card-summary", "all-card-summaries");
+        eventProcessingConfigurer.assignProcessingGroup("card-transaction", "all-card-summaries");
     }
 
     @Bean

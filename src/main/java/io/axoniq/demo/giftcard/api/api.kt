@@ -1,11 +1,8 @@
 package io.axoniq.demo.giftcard.api
 
 import org.axonframework.modelling.command.TargetAggregateIdentifier
-
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.NamedQueries
-import javax.persistence.NamedQuery
+import java.time.Instant
+import javax.persistence.*
 
 // Commands
 
@@ -46,4 +43,12 @@ data class CardSummary(@Id var id: String, var initialValue: Int, var remainingV
     constructor() : this("", 0, 0)
 }
 
+@Entity
+data class CardTransaction(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int, var cardId: String, var amount: Int, var txDate: Instant) {
+}
+
+
 data class CountCardSummariesResponse(val count: Int, val lastEvent: Long)
+
+
+
